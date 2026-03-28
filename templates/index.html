@@ -3,69 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <title>Portfolio Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #131722;
+            --surface: #1e222d;
+            --surface2: #2a2e39;
+            --border: #2a2e39;
+            --border2: #363a45;
+            --green: #26a69a;
+            --red: #ef5350;
+            --text: #d1d4dc;
+            --muted: #787b86;
+            --label: #b2b5be;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 12px;
+            font-size: 13px;
         }
-        h1, h2 {
-            margin-bottom: 10px;
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            overflow: hidden;
         }
-        .section {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 14px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
         }
+
+        .panel-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .col-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .col-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
         .item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            align-items: center;
+            padding: 7px 14px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+            cursor: default;
         }
-        .item:last-child {
-            border-bottom: none;
+
+        .item:last-child { border-bottom: none; }
+        .item:hover { background: var(--surface2); }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .indicator {
+            width: 2px;
+            height: 14px;
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+
+        .ind-pos { background: var(--green); }
+        .ind-neg { background: var(--red); }
+
+        .item-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--label);
+        }
+
+        .item-value {
+            font-size: 12px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            padding: 2px 7px;
+            border-radius: 2px;
+        }
+
         .positive {
-            color: green;
+            color: var(--green);
+            background: rgba(38,166,154,0.1);
         }
+
         .negative {
-            color: red;
+            color: var(--red);
+            background: rgba(239,83,80,0.1);
         }
     </style>
 </head>
 <body>
 
-    <h1>📊 Portfolio Dashboard</h1>
-
-    <!-- Portfolio Daily Change -->
-    <div class="section">
-        <h2>Portfolio Daily Change</h2>
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">Portfolio Daily Change</span>
+        </div>
+        <div class="col-labels">
+            <span class="col-label">Name</span>
+            <span class="col-label">Change %</span>
+        </div>
         {% for name, value in data_portfoliodaily.items() %}
-            <div class="item">
-                <span>{{ name }}</span>
-                <span class="{{ 'positive' if value >= 0 else 'negative' }}">
-                    {{ (value * 100) | round(2) }}%
-                </span>
+        <div class="item">
+            <div class="item-left">
+                <div class="indicator {{ 'ind-pos' if value >= 0 else 'ind-neg' }}"></div>
+                <span class="item-name">{{ name }}</span>
             </div>
+            <span class="item-value {{ 'positive' if value >= 0 else 'negative' }}">
+                {{ '+' if value >= 0 else '' }}{{ (value * 100) | round(2) }}%
+            </span>
+        </div>
         {% endfor %}
     </div>
 
-    <!-- Individual Tickers -->
-    <div class="section">
-        <h2>All Tickers Daily Change</h2>
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">All Tickers Daily Change</span>
+        </div>
+        <div class="col-labels">
+            <span class="col-label">Ticker</span>
+            <span class="col-label">Change %</span>
+        </div>
         {% for ticker, value in data_alltickersdaily.items() %}
-            <div class="item">
-                <span>{{ ticker }}</span>
-                <span class="{{ 'positive' if value >= 0 else 'negative' }}">
-                    {{ (value * 100) | round(2) }}%
-                </span>
+        <div class="item">
+            <div class="item-left">
+                <div class="indicator {{ 'ind-pos' if value >= 0 else 'ind-neg' }}"></div>
+                <span class="item-name">{{ ticker }}</span>
             </div>
+            <span class="item-value {{ 'positive' if value >= 0 else 'negative' }}">
+                {{ '+' if value >= 0 else '' }}{{ (value * 100) | round(2) }}%
+            </span>
+        </div>
         {% endfor %}
     </div>
 
 </body>
 </html>
-

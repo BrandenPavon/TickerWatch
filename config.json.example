@@ -1,5 +1,5 @@
 {
-  "tickers": ["VOO", "QQQM"],
+  "tickers": ["VOO", "QQQM", "AAPL", "MSFT", "NVDA", "KO", "PG"],
   "portfolios": {
     "P1": [
       {"ticker": "QQQM", "allocation": 0.5},
@@ -7,6 +7,16 @@
     ],
     "SP500 Portfolio": [
       {"ticker": "SPY", "allocation": 1}
+    ],
+    "60/40 Portfolio": [
+      {"ticker": "VOO", "allocation": 0.6},
+      {"ticker": "TLT", "allocation": 0.4}
+    ],
+    "Warren Buffett Style": [
+      {"ticker": "BRK-B", "allocation": 0.5},
+      {"ticker": "AAPL", "allocation": 0.2},
+      {"ticker": "KO", "allocation": 0.15},
+      {"ticker": "OXY", "allocation": 0.15}
     ]
   }
 }
