@@ -1,0 +1,12 @@
+{
+  "tickers": ["VOO", "QQQM"],
+  "portfolios": {
+    "P1": [
+      {"ticker": "QQQM", "allocation": 0.5},
+      {"ticker": "VOO", "allocation": 0.5}
+    ],
+    "SP500 Portfolio": [
+      {"ticker": "SPY", "allocation": 1}
+    ]
+  }
+}
