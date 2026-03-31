@@ -66,6 +66,10 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+@app.route('/config.json')
+def configjson():
+    return send_from_directory(app.root_path, 'config.json', mimetype='application/json')
+
 if __name__ == "__main__":
     app.run()
 
