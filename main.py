@@ -61,8 +61,12 @@ def index():
     mydata = TickerData(debug=False)
     return render_template("index.html", data_tickers=mydata.tickers, data_portfolios=mydata.portfolios, data_alltickersdaily=mydata.alltickersdaily, data_portfoliodaily = mydata.portfoliodaily );
 
-
+@app.route("/allocations")
+def allocations():
+    mydata = TickerData(debug=False)
+    return render_template("allocations.html", data_tickers=mydata.tickers, data_portfolios=mydata.portfolios, data_alltickersdaily=mydata.alltickersdaily, data_portfoliodaily = mydata.portfoliodaily );
 @app.route('/favicon.ico')
+
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
