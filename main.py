@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 class TickerData:
 
-    def __init__(self):
+    def __init__(self, debug=False):
         self.tickers = [] # string list holding individual tickers to watch
         self.portfolios = [] # string list holding portfolio to watch
         self.alltickersdaily = {} # dictionary storing all tickers info
@@ -24,7 +24,7 @@ class TickerData:
                 continue
             else:
                 self.alltickersdaily[ticker] = self.get_pct_change(yf.Ticker(ticker).info)
-            print(ticker)
+            if(debug == True): print(ticker)
 
 
         self.portfolios = data["portfolios"]
@@ -33,14 +33,14 @@ class TickerData:
         for name, positions in self.portfolios.items():
             self.portfoliodaily[name] = 0
             for position in positions:
-                print(position["ticker"])
-                print(position["allocation"])
+                if(debug == True): print(position["ticker"])
+                if(debug == True): print(position["allocation"])
                 if position["ticker"] in self.alltickersdaily:
                     pass
                 else:
                     self.alltickersdaily[position["ticker"]] = self.get_pct_change(yf.Ticker(position["ticker"]).info)
                 self.portfoliodaily[name] += self.alltickersdaily[position["ticker"]] * position["allocation"]
-        print(self.portfoliodaily)
+        if(debug == True): print(self.portfoliodaily)
 
             
 
@@ -58,8 +58,9 @@ class TickerData:
 
 @app.route("/")
 def index():
-    mydata = TickerData()
+    mydata = TickerData(debug=False)
     return render_template("index.html", data_tickers=mydata.tickers, data_portfolios=mydata.portfolios, data_alltickersdaily=mydata.alltickersdaily, data_portfoliodaily = mydata.portfoliodaily );
+
 
 @app.route('/favicon.ico')
 def favicon():
