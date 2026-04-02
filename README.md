@@ -9,3 +9,7 @@ pip install -r requirements.txt
 ```bash
 cp config.json.example config.json
 ```
+
+```bash
+python main.py
+```
