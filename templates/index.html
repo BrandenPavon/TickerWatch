@@ -84,15 +84,16 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .col-label {
-            font-size: 13px;
-        }
-
-        .item {
-            display: flex;
-            justify-content: space-between;
+        .col-labels, .item {
+            display: grid;
+            grid-template-columns: 2fr repeat(4, 1fr);
             align-items: center;
             padding: 6px 14px;
+        }
+
+
+
+        .item {
             border-bottom: 1px solid var(--border);
             transition: background 0.1s;
             cursor: default;
@@ -106,6 +107,20 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .item-value {
+            font-size: 14px;
+            padding: 2px 7px;
+            border-radius: 2px;
+            text-align: center;
+            justify-self: start;  /* or center */
+        }
+
+        .col-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-align: left;
         }
 
         .indicator {
@@ -154,38 +169,64 @@
         <div class="col-labels">
             <span class="col-label">Name</span>
             <span class="col-label">Change %</span>
+            <span class="col-label">Month</span>
+            <span class="col-label">YTD</span>
+            <span class="col-label">1 Year</span>
         </div>
-        {% for name, value in data_portfoliodaily.items() %}
-        <div class="item">
-            <div class="item-left">
-                <div class="indicator {{ 'ind-pos' if value >= 0 else 'ind-neg' }}"></div>
-                <span class="item-name">{{ name }}</span>
-            </div>
-            <span class="item-value {{ 'positive' if value >= 0 else 'negative' }}">
-                {{ '+' if value >= 0 else '' }}{{ (value * 100) | round(2) }}%
-            </span>
-        </div>
-        {% endfor %}
+        <!-- Portfolios -->
+              {% for portfolio, pdata in data_portfolios.items() %}
+              <div class="item">
+                  <div class="item-left">
+                      <div class="indicator {{ 'ind-pos' if pdata['day_pctchange'] >= 0 else 'ind-neg' }}"></div>
+                      <span class="item-name">{{ portfolio }}</span>
+                  </div>
+                  <span class="item-value {{ 'positive' if pdata['day_pctchange'] >= 0 else 'negative' }}">
+                      {{ '+' if pdata['day_pctchange'] >= 0 else '' }}{{ (pdata['day_pctchange'] * 100) | round(2) }}%
+                  </span>
+                  <span class="item-value {{ 'positive' if pdata['month_pctchange'] >= 0 else 'negative' }}">
+                      {{ '+' if pdata['month_pctchange'] >= 0 else '' }}{{ (pdata['month_pctchange'] * 100) | round(2) }}%
+                  </span>
+                  <span class="item-value {{ 'positive' if pdata['ytd_pctchange'] >= 0 else 'negative' }}">
+                      {{ '+' if pdata['ytd_pctchange'] >= 0 else '' }}{{ (pdata['ytd_pctchange'] * 100) | round(2) }}%
+                  </span>
+                  <span class="item-value {{ 'positive' if pdata['year_pctchange'] >= 0 else 'negative' }}">
+                      {{ '+' if pdata['year_pctchange'] >= 0 else '' }}{{ (pdata['year_pctchange'] * 100) | round(2) }}%
+                  </span>
+              </div>
+              {% endfor %}
     </div>
     <div class="panel">
         <div class="panel-header">
-            <span class="panel-title">All Tickers Daily Change</span>
+            <span class="panel-title">Portfolio Daily Change</span>
         </div>
         <div class="col-labels">
-            <span class="col-label">Ticker</span>
+            <span class="col-label">Name</span>
             <span class="col-label">Change %</span>
+            <span class="col-label">Month</span>
+            <span class="col-label">YTD</span>
+            <span class="col-label">1 Year</span>
         </div>
-        {% for ticker, value in data_alltickersdaily | dictsort %}
-        <div class="item">
-            <div class="item-left">
-                <div class="indicator {{ 'ind-pos' if value >= 0 else 'ind-neg' }}"></div>
-                <span class="item-name">{{ ticker }}</span>
-            </div>
-            <span class="item-value {{ 'positive' if value >= 0 else 'negative' }}">
-                {{ '+' if value >= 0 else '' }}{{ (value * 100) | round(2) }}%
-            </span>
-        </div>
-        {% endfor %}
+          <!-- Tickers -->
+          {% for ticker, tdata in data_alltickersdata.items() %}
+          <div class="item">
+              <div class="item-left">
+                  <div class="indicator {{ 'ind-pos' if tdata['day_pctchange'] >= 0 else 'ind-neg' }}"></div>
+                  <span class="item-name">{{ ticker }}</span>
+              </div>
+              <span class="item-value {{ 'positive' if tdata['day_pctchange'] >= 0 else 'negative' }}">
+                  {{ '+' if tdata['day_pctchange'] >= 0 else '' }}{{ (tdata['day_pctchange'] * 100) | round(2) }}%
+              </span>
+              <span class="item-value {{ 'positive' if tdata['month_pctchange'] >= 0 else 'negative' }}">
+                  {{ '+' if tdata['month_pctchange'] >= 0 else '' }}{{ (tdata['month_pctchange'] * 100) | round(2) }}%
+              </span>
+              <span class="item-value {{ 'positive' if tdata['ytd_pctchange'] >= 0 else 'negative' }}">
+                  {{ '+' if tdata['ytd_pctchange'] >= 0 else '' }}{{ (tdata['ytd_pctchange'] * 100) | round(2) }}%
+              </span>
+              <span class="item-value {{ 'positive' if tdata['year_pctchange'] >= 0 else 'negative' }}">
+                  {{ '+' if tdata['year_pctchange'] >= 0 else '' }}{{ (tdata['year_pctchange'] * 100) | round(2) }}%
+              </span>
+          </div>
+          {% endfor %} 
     </div>
 </div>
 </body>
