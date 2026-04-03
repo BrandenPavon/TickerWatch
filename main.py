@@ -1,4 +1,5 @@
 import yfinance as yf
+import pytz
 import json
 import os
 from flask import Flask, session
@@ -12,7 +13,9 @@ class TickerData:
         self.tickers = [] # string list holding individual tickers to watch
         self.portfolios = [] # string list holding portfolio to watch
         self.alltickersdaily = {} # dictionary storing all tickers info
+        self.alltickersytd= {} # dictionary storing all tickers info
         self.portfoliodaily= {} # dictionary storing all tickers info
+        self.portfolioytd = {} # dictionary storing all tickers info
         with open("config.json", "r") as f:
             data = json.load(f)
 
@@ -20,11 +23,15 @@ class TickerData:
 
         # test code
         for ticker in self.tickers:
-            if ticker in self.alltickersdaily:
-                continue
-            else:
-                self.alltickersdaily[ticker] = self.get_pct_change(yf.Ticker(ticker).info)
             if(debug == True): print(ticker)
+            if ticker in self.alltickersdaily:
+                pass
+            else:
+                self.alltickersdaily[ticker] = self.get_pct_daily_change(yf.Ticker(ticker).info)
+            if ticker in self.alltickersytd:
+                pass
+            else:
+                self.alltickersytd[ticker] = self.get_pct_ytd_change(yf.Ticker(ticker).info)
 
 
         self.portfolios = data["portfolios"]
@@ -32,19 +39,27 @@ class TickerData:
         # test code
         for name, positions in self.portfolios.items():
             self.portfoliodaily[name] = 0
+            self.portfolioytd[name] = 0
             for position in positions:
                 if(debug == True): print(position["ticker"])
                 if(debug == True): print(position["allocation"])
                 if position["ticker"] in self.alltickersdaily:
                     pass
                 else:
-                    self.alltickersdaily[position["ticker"]] = self.get_pct_change(yf.Ticker(position["ticker"]).info)
+                    self.alltickersdaily[position["ticker"]] = self.get_pct_daily_change(yf.Ticker(position["ticker"]).info)
+                if position["ticker"] in self.alltickersytd:
+                    pass
+                else:
+                    self.alltickersytd[position["ticker"]] = self.get_pct_ytd_change(yf.Ticker(position["ticker"]).info)
+
                 self.portfoliodaily[name] += self.alltickersdaily[position["ticker"]] * position["allocation"]
+                self.portfolioytd[name] += self.alltickersytd[position["ticker"]] * position["allocation"]
+            print(name, self.portfolioytd[name])
         if(debug == True): print(self.portfoliodaily)
 
             
 
-    def get_pct_change(self, ticker_info):
+    def get_pct_daily_change(self, ticker_info):
         prev = float(ticker_info["previousClose"])
         # try regularMarketPrice first, fallback to bid
         current = None
@@ -54,7 +69,14 @@ class TickerData:
             # fallback to bid (if available)
             current = float(ticker_info.get("bid", prev))
         return (current - prev) / prev
+    def get_pct_ytd_change(self, ticker_info):
+        df = yf.download(ticker_info["symbol"], start=datetime(datetime.now(pytz.timezone('America/Los_Angeles')).year,1,1).date(), end=datetime.now(pytz.timezone('America/Los_Angeles')), progress=False)
+        close = df["Close"].squeeze()
+        start = close.iloc[0]
+        end = close.iloc[-1]
+        pct = (end - start) / start * 100
 
+        return pct
 
 @app.route("/")
 def index():
@@ -76,5 +98,6 @@ def configjson():
     return send_from_directory(app.root_path, 'config.json', mimetype='application/json')
 
 if __name__ == "__main__":
+    print(yf.Ticker("SPY").info)
     app.run()
 
